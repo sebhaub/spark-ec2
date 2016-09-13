@@ -278,7 +278,7 @@ def parse_args():
         help="If specified, launch slaves as spot instances with the given " +
              "maximum price (in dollars)")
     parser.add_option(
-        "--ganglia", action="store_true", default=True,
+        "--ganglia", action="store_true", default=False,
         help="Setup Ganglia monitoring on cluster (default: %default). NOTE: " +
              "the Ganglia page will be publicly accessible")
     parser.add_option(
@@ -528,6 +528,8 @@ def launch_cluster(conn, opts, cluster_name):
         master_group.authorize('tcp', 50070, 50070, authorized_address)
         master_group.authorize('tcp', 60070, 60070, authorized_address)
         master_group.authorize('tcp', 4040, 4045, authorized_address)
+        master_group.authorize('tcp', 8090, 8090, authorized_address)
+
         # Rstudio (GUI for R) needs port 8787 for web access
         master_group.authorize('tcp', 8787, 8787, authorized_address)
         # HDFS NFS gateway requires 111,2049,4242 for tcp & udp
@@ -820,8 +822,7 @@ def setup_cluster(conn, master_nodes, slave_nodes, opts, deploy_ssh_key):
             print(slave_address)
             ssh_write(slave_address, opts, ['tar', 'x'], dot_ssh_tar)
 
-    modules = ['spark', 'ephemeral-hdfs', 'persistent-hdfs',
-               'mapreduce', 'spark-standalone', 'tachyon', 'rstudio']
+    modules = ['spark', 'ephemeral-hdfs', 'persistent-hdfs', 'spark-standalone']
 
     if opts.hadoop_major_version == "1":
         modules = list(filter(lambda x: x != "mapreduce", modules))
