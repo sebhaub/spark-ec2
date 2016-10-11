@@ -813,7 +813,7 @@ def setup_cluster(conn, master_nodes, slave_nodes, opts, deploy_ssh_key):
             print(slave_address)
             ssh_write(slave_address, opts, ['tar', 'x'], dot_ssh_tar)
 
-    modules = ['spark', 'ephemeral-hdfs', 'persistent-hdfs', 'spark-standalone']
+    modules = ['spark', 'spark-standalone']
 
     # Clear SPARK_WORKER_INSTANCES if running on YARN
     if opts.hadoop_major_version == "yarn":
