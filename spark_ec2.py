@@ -253,6 +253,9 @@ def parse_args():
         "--ebs-root-vol-type", default="gp2",
         help="Root EBS volume type (e.g. 'gp2', 'io1', 'st1', 'sc1', 'standard') (default: 'gp2')")
     parser.add_option(
+        "--ebs-root-vol-size", metavar="SIZE", type="int", default=0,
+        help="Size (in GB) of EBS Root volume. Default is the size of the used AMI")
+    parser.add_option(
         "--ebs-vol-size", metavar="SIZE", type="int", default=0,
         help="Size (in GB) of each EBS volume.")
     parser.add_option(
@@ -588,6 +591,8 @@ def launch_cluster(conn, opts, cluster_name):
     block_map = BlockDeviceMapping()
     # add root ebs volume type
     root_device = EBSBlockDeviceType()
+    if opts.ebs_root_vol_size > 0:
+        root_device.size = opts.ebs_root_vol_size
     root_device.volume_type = opts.ebs_root_vol_type
     root_device.delete_on_termination = True
     block_map['/dev/sda1'] = root_device
